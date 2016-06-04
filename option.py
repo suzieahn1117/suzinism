@@ -159,10 +159,14 @@ class board():
             master = self._root_window, width = 600, height = 600,
             background = '#2FA611')
 
+        
+        self.othello = othello_logic.game([self.user_input.get_col_number(),self.user_input.get_row_number(),'B','B','B'])
+
 
 
     def start(self):
-      
+        self.othello._new_game_board
+        self.othello.disc_center()
 
         self._root_window.rowconfigure(0, weight = 10)
         self._root_window.columnconfigure(0, weight = 10)
@@ -173,33 +177,65 @@ class board():
      
 
         self._root_window.bind("<Configure>", self.on_resize)
+        self._root_window.bind('<Button 1>', self.on_tapped)
         self._root_window.mainloop()
         
    
+    def on_tapped(self, event):
+        row = int(self.user_input.get_row_number())
+        col = int(self.user_input.get_col_number())
+        width = self._canvas.winfo_width()
+        height = self._canvas.winfo_height()
+        spot_height = (1/row)*height
+        spot_width = (1/col)*width
+        matrix = self.othello.board
 
+        print(event.x)
+        print(spot_width*1)
+        
+        for c in range(0, len(matrix)):
+            for r in range(0,len(matrix[0])):
 
-    def on_resize(self,event):
+                if event.x > spot_width*c:
+                    if event.x <= spot_width*(c+1):
+                        if event.y > spot_height*r:
+                            if event.y <= spot_height*(c+1):
+                                selected = [c+1,r+1]
+                                self.othello.set_move(selected)
+                                self.othello.valid_move()
+
+        self._canvas.delete(tkinter.ALL)
+        return self.on_resize()
+                
+
+    def on_resize(self,event=None):
         row = int(self.user_input.get_row_number())
         col = int(self.user_input.get_col_number())
         self._canvas.delete(tkinter.ALL)
-
         width = self._canvas.winfo_width()
         height = self._canvas.winfo_height()
-
+        
         for x in range(row):
             self._canvas.create_line(0, (x/row)*height, width, (x/row)*height, fill = 'black')
-            #y = (x/row)/height
-            print('xrow', (x/row)*height)
 
         for y in range(col):
             self._canvas.create_line((y/col)*width, 0, (y/col)*width, height, fill = 'black')
-            print('ycol', (y/col)*width)
-            
+
+        spot_height = (1/row)*height
+        spot_width = (1/col)*width
+        matrix = self.othello.board
         
+        for c in range(0, len(matrix)):
+            for r in range(0,len(matrix[0])):
+
+                
+                if matrix[c][r] == 1:
+                    self._canvas.create_oval(spot_width*(c),spot_height*(r),spot_width*(c+1),spot_height*(r+1),fill='black')
+                if matrix[c][r] == 2:
+                    self._canvas.create_oval(spot_width*(c),spot_height*(r),spot_width*(c+1),spot_height*(r+1),fill='white')
+
         
-            
-        self._canvas.create_oval((row/2)-1,(col/2)-1,row/2,col/2, fill = 'white')
-      
+              
         
 
     

@@ -4,7 +4,7 @@
 
 
 
-#import othello_ui
+import othello_ui
 
 from collections import namedtuple
 
@@ -104,17 +104,14 @@ class game:
             return False
 
     def place_move(self, row, col):
-        while True:
-            if self.invalid_move_check() == False:
-                print('TRY AGAIN')
-                x = othello_ui.move_input()
-                self.row_move = int(x[0])
-                row = int(x[0]) - 1
-                self.col_move = int(x[1])
-                col = int(x[1]) - 1
-                
-            else:
-                break
+        if self.invalid_move_check() == False:
+            print('TRY AGAIN')
+            x = othello_ui.move_input()
+            self.row_move = int(x[0])
+            row = int(x[0]) - 1
+            self.col_move = int(x[1])
+            col = int(x[1]) - 1
+
                 
         self.board[row][col] = self.turn
         self.alternate_turn()
